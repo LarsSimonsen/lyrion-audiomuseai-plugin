@@ -678,7 +678,7 @@ sub _topMenu {
 		['audiomuseai', 'menu_status']);
 
 	# Open Music Map: weblink-bearing item with action.go fallback.
-	my $url = _webUrl();
+	my $url = _mapUrl();
 	push @menu, {
 		text    => string('PLUGIN_AUDIOMUSEAI_MENU_OPEN_MAP'),
 		weblink => $url,
@@ -2721,7 +2721,7 @@ sub _runClustering {
 
 sub _openMap {
 	my $request = shift;
-	my $url = _webUrl();
+	my $url = _mapUrl();
 	_notifyLines($request, [
 		string('PLUGIN_AUDIOMUSEAI_MENU_OPEN_MAP') . ':',
 		$url,
@@ -2977,6 +2977,11 @@ sub _webUrl {
 		}
 	}
 	return "$u/";
+}
+
+# The Music Map page of the AudioMuse-AI web UI.
+sub _mapUrl {
+	return _webUrl() . 'map';
 }
 
 sub _count {

@@ -55,13 +55,24 @@ check('no server address',    webUrl('http://localhost:8000', ''),    'http://lo
 check('loopback server addr', webUrl('http://localhost:8000', '127.0.0.1'), 'http://localhost:8000/');
 check('empty pref',           webUrl(''),                             '/');
 
+# The link opens the Music Map page, under any path in the pref.
+sub mapUrl {
+    my ($url) = @_;
+    $prefs->set('url', $url);
+    local $Slim::Utils::Network::serverAddr = '192.168.1.10';
+    return Plugins::AudioMuseAI::Plugin::_mapUrl();
+}
+check('map page',             mapUrl('http://localhost:8000'),        'http://192.168.1.10:8000/map');
+check('map page, path kept',  mapUrl('http://localhost:8000/am/'),    'http://192.168.1.10:8000/am/map');
+check('map page, LAN host',   mapUrl('http://music.lan:8000'),        'http://music.lan:8000/map');
+
 # The menu command shows the same URL as text.
 {
     my $emitted;
     local *Plugins::AudioMuseAI::Plugin::_emit = sub { $emitted = $_[1] };
     $prefs->set('url', 'http://localhost:8000');
     Plugins::AudioMuseAI::Plugin::_openMap(undef);
-    check('open_map text', $emitted->[1]{text} // '', 'http://192.168.1.10:8000/');
+    check('open_map text', $emitted->[1]{text} // '', 'http://192.168.1.10:8000/map');
 }
 
 print "\n$pass passed, $fail failed\n";
